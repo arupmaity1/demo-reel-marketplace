@@ -26,7 +26,7 @@ ffprobe -version | head -1
 
 If `ffmpeg` is missing: `brew install ffmpeg` (macOS) or `sudo apt install ffmpeg` (Debian/Ubuntu).
 
-You'll also need a **Gemini API key** — get one (free tier is plenty for testing) at https://aistudio.google.com/apikey. Don't put it in any file or env var — the plugin will ask for it during install and store it in your OS keychain.
+You'll also need a **Gemini API key** — get one (free tier is plenty for testing) at https://aistudio.google.com/apikey. The plugin will ask for it during install and store it in Claude Code's credential store; for standalone/CLI use, you can also place it in the OS keychain at service `demo-reel`/account `gemini_api_key`, or set `GEMINI_API_KEY` in your shell.
 
 ## Install
 
@@ -127,11 +127,11 @@ Output goes to `demo/output/demo.composed.mp4`. Original is preserved.
 
 **TTS returns `PROHIBITED_CONTENT`.** Gemini's classifier rejected a vague style prompt. Make the narration more concrete or specify a clearer style. Tell Claude: *"the style for scene 2 is too vague — make it more directive."*
 
-**Final video has no audio.** Either `--silent` was passed by mistake, or TTS failed. Check `demo/output/audio/` — if it's empty, the API key may not be reaching the script. Run `/plugin disable demo-reel` then `/plugin enable demo-reel` to re-prompt for the key.
+**Final video has no audio.** Either `--silent` was passed by mistake, or TTS failed. Check `demo/output/audio/` — if it's empty, the API key may not be reaching the script. Verify with `security find-generic-password -s "demo-reel" -a "gemini_api_key"` on macOS, or check `$GEMINI_API_KEY`. To rotate, run the keychain `add-generic-password ... -U` command or re-run `/plugin install demo-reel`.
 
 **Video shorter than narration.** The pipeline freezes the last frame to pad audio length, but if you want active motion add a slow `scroll` or `hover` at the end. Tell Claude: *"extend scene 3 with a slow scroll so it doesn't freeze."*
 
-**Want to rotate the API key.** Run `/plugin disable demo-reel` then `/plugin enable demo-reel` — the install prompt re-runs.
+**Want to rotate the API key.** Update the keychain entry with `-U` (`security add-generic-password -U -s "demo-reel" -a "gemini_api_key" -w 'NEW_KEY'`), or re-run `/plugin install demo-reel@demo-reel-marketplace` to re-prompt.
 
 ## Going deeper
 

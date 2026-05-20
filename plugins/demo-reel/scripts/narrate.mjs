@@ -4,6 +4,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const args = process.argv.slice(2);
 const scenesPath = resolve(args[0]);
@@ -12,21 +13,55 @@ const onlyScene = args.includes('--scene') ? args[args.indexOf('--scene') + 1] :
 
 const config = JSON.parse(readFileSync(scenesPath, 'utf8'));
 
+function readFromKeychain() {
+  if (process.platform === 'darwin') {
+    try {
+      const out = execFileSync('security',
+        ['find-generic-password', '-s', 'demo-reel', '-a', 'gemini_api_key', '-w'],
+        { stdio: ['ignore', 'pipe', 'ignore'] });
+      const v = out.toString('utf8').trim();
+      return v || null;
+    } catch { return null; }
+  }
+  if (process.platform === 'linux') {
+    try {
+      const out = execFileSync('secret-tool',
+        ['lookup', 'service', 'demo-reel', 'account', 'gemini_api_key'],
+        { stdio: ['ignore', 'pipe', 'ignore'] });
+      const v = out.toString('utf8').trim();
+      return v || null;
+    } catch { return null; }
+  }
+  return null;
+}
+
 // API key lookup chain:
-// 1. CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY — populated by Claude Code from OS keychain (preferred)
-// 2. GEMINI_API_KEY — for CI / standalone script execution
-const apiKey = process.env.CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+// 1. CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY — set by Claude Code inside its skill execution context
+// 2. GEMINI_API_KEY                       — env var fallback (CI / shell-launched runs)
+// 3. OS keychain (macOS: `security`, Linux: `secret-tool`) under service `demo-reel`, account `gemini_api_key`
+const apiKey =
+  process.env.CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY
+  || process.env.GEMINI_API_KEY
+  || readFromKeychain();
 
 if (!apiKey) {
+  const platformHelp = process.platform === 'darwin'
+    ? `  security add-generic-password -s "demo-reel" -a "gemini_api_key" -w 'YOUR_KEY'`
+    : process.platform === 'linux'
+    ? `  echo -n 'YOUR_KEY' | secret-tool store --label='demo-reel' service demo-reel account gemini_api_key`
+    : `  set GEMINI_API_KEY in your environment (Windows keychain not yet supported)`;
   console.error(`✗ No Gemini API key found.
 
 Looked for:
-  1. CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY  (set automatically when the demo-reel plugin is installed via Claude Code)
-  2. GEMINI_API_KEY                        (environment variable fallback)
+  1. CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY  (Claude Code skill execution context only)
+  2. GEMINI_API_KEY                        (environment variable)
+  3. OS keychain entry  service="demo-reel"  account="gemini_api_key"
 
 To fix this:
-  • If installed via Claude Code: run /plugin disable demo-reel then /plugin enable demo-reel to re-prompt for credentials
-  • Outside Claude Code: export GEMINI_API_KEY=your_key_here
+  • Store in OS keychain (recommended):
+${platformHelp}
+  • Or set the env var: export GEMINI_API_KEY=your_key_here
+  • Or reinstall via Claude Code: /plugin disable demo-reel && /plugin install demo-reel@demo-reel-marketplace
   • Get a key at: https://aistudio.google.com/apikey`);
   process.exit(1);
 }

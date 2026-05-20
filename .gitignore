@@ -1,0 +1,7 @@
+node_modules/
+package.json
+package-lock.json
+demo/
+.xamun-hands/
+.DS_Store
+CLAUDE.md

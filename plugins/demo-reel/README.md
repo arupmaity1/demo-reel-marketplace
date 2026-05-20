@@ -17,22 +17,29 @@ Ask Claude Code things like *"record a 60-second demo of the dashboard"*, *"make
 - A Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
 - Playwright (auto-installed into target project on first use)
 
-**Credentials.** When you install this plugin via Claude Code (`/plugin install demo-reel@demo-reel-marketplace`), Claude Code prompts for your Gemini API key once and stores it in your OS keychain (macOS Keychain, Windows Credential Manager, or `~/.claude/.credentials.json` as fallback). The plugin's scripts read it from the keychain automatically — no shell config needed.
+**Credentials.** `narrate.mjs` resolves your Gemini API key by trying, in order:
 
-For standalone use (CI, scripts run outside Claude Code), set the env var instead:
+1. `CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY` — set automatically inside Claude Code's plugin-skill execution context.
+2. `GEMINI_API_KEY` env var — for CI, shell-launched runs, or any subprocess not spawned by Claude Code's skill runtime.
+3. **OS keychain** entry at service `demo-reel`, account `gemini_api_key` (macOS Keychain via `security`; Linux via `secret-tool`). Persists across reboots, scoped to your user.
+
+For standalone use, the keychain option is the most ergonomic — no shell config, no env-var leaks:
+
+```bash
+# macOS
+security add-generic-password -s "demo-reel" -a "gemini_api_key" -w 'YOUR_KEY'
+
+# Linux (requires libsecret-tools)
+echo -n 'YOUR_KEY' | secret-tool store --label='demo-reel' service demo-reel account gemini_api_key
+```
+
+Env-var fallback if you don't want to touch the keychain:
 
 ```bash
 export GEMINI_API_KEY=your_key_here
 ```
 
-The scripts check `CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY` first (keychain), then `GEMINI_API_KEY` (env var).
-
-To re-prompt for credentials later (e.g., when rotating the key):
-
-```
-/plugin disable demo-reel
-/plugin enable demo-reel
-```
+To rotate the key, overwrite the keychain entry (re-run the `add-generic-password` command above — `-U` updates in place) or re-export the env var. If the key was set via `/plugin install`, run `/plugin disable demo-reel && /plugin install demo-reel@demo-reel-marketplace` to re-prompt.
 
 ## Install
 

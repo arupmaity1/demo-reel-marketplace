@@ -106,15 +106,24 @@ ffmpeg -version | head -1
 ffprobe -version | head -1
 ```
 
-**API key check.** When the plugin is installed via Claude Code, the Gemini API key is stored in the OS keychain and exposed to scripts as `CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY`. The scripts also accept `GEMINI_API_KEY` as a fallback for standalone use.
+**API key check.** `narrate.mjs` resolves the Gemini key from (in order): `CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY` env var, `GEMINI_API_KEY` env var, or the OS keychain entry at service `demo-reel`, account `gemini_api_key`.
 
 Quick check:
 
 ```bash
-[ -n "$CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY" ] || [ -n "$GEMINI_API_KEY" ] && echo "✓ API key available" || echo "✗ MISSING"
+[ -n "$CLAUDE_PLUGIN_OPTION_GEMINI_API_KEY" ] \
+  || [ -n "$GEMINI_API_KEY" ] \
+  || security find-generic-password -s "demo-reel" -a "gemini_api_key" -w >/dev/null 2>&1 \
+  && echo "✓ API key available" || echo "✗ MISSING"
 ```
 
-If missing and the plugin was installed via Claude Code, tell the user to re-enable it (`/plugin disable demo-reel` then `/plugin enable demo-reel`) to re-prompt for credentials. If running outside Claude Code, they need `export GEMINI_API_KEY=...`.
+If missing, recommend the keychain path (persistent, no shell config):
+
+```bash
+security add-generic-password -s "demo-reel" -a "gemini_api_key" -w 'YOUR_KEY'
+```
+
+If the key was originally set via `/plugin install demo-reel`, re-running `/plugin install` re-prompts. The env var `GEMINI_API_KEY` also works for one-shot/CI runs.
 
 Also confirm their dev server is running at the `baseUrl` in scenes.json — don't try to start it yourself.
 
