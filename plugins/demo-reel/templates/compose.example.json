@@ -1,0 +1,38 @@
+{
+  "$schema": "Compose config for adding intro/outro cards, lower-thirds, and music to an existing demo video.",
+  "input": "demo/output/demo.mp4",
+  "output": "demo/output/demo.composed.mp4",
+  "intro": {
+    "duration": 3,
+    "title": "Xamun Intelligence",
+    "subtitle": "Always-on strategy governance",
+    "background": "#0E0E0E",
+    "titleColor": "#FFFFFF",
+    "subtitleColor": "#A0A0A0"
+  },
+  "outro": {
+    "duration": 4,
+    "title": "See it in action",
+    "subtitle": "xamun.com",
+    "background": "#0E0E0E"
+  },
+  "lowerThirds": [
+    {
+      "text": "Real-time anomaly detection",
+      "start": 5.0,
+      "duration": 3.0,
+      "position": "bottom-left"
+    },
+    {
+      "text": "12 hours of headroom",
+      "start": 18.0,
+      "duration": 3.0,
+      "position": "bottom-left"
+    }
+  ],
+  "music": {
+    "path": "assets/ambient-track.mp3",
+    "volume": 0.3,
+    "duckUnderNarration": true
+  }
+}

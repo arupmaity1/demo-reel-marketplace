@@ -1,0 +1,52 @@
+{
+  "$schema": "Multi-speaker dialogue demo. Scenes can mix single-narrator and multi-speaker formats.",
+  "output": "demo/output/demo.mp4",
+  "baseUrl": "http://localhost:3000",
+  "viewport": { "width": 1280, "height": 720 },
+  "model": "gemini-3.1-flash-tts-preview",
+  "globalStyle": "Conversational and natural — like two colleagues who know each other well discussing a product. Don't over-perform; let pauses breathe.",
+  "slowMo": 250,
+  "scenes": [
+    {
+      "id": "intro",
+      "speakers": [
+        { "name": "Arup", "voice": "Charon" },
+        { "name": "Neil", "voice": "Aoede" }
+      ],
+      "dialogue": [
+        { "speaker": "Arup", "text": "Neil, you've been pressure-testing this with mid-market CFOs the last few weeks. What's actually landing?" },
+        { "speaker": "Neil", "text": "What lands hardest is the always-on part. [pause] They get it instantly when they see the alert before any report would have surfaced it." }
+      ],
+      "actions": [
+        { "type": "goto", "url": "/" },
+        { "type": "wait", "ms": 8000 }
+      ]
+    },
+    {
+      "id": "drill-down",
+      "speakers": [
+        { "name": "Arup", "voice": "Charon" },
+        { "name": "Neil", "voice": "Aoede" }
+      ],
+      "dialogue": [
+        { "speaker": "Arup", "text": "Show me what you mean. [pause] This anomaly here — what is it telling us?" },
+        { "speaker": "Neil", "text": "Inventory mismatch in the southern region. Twelve hours ahead of any weekly report. The CFO sees this in the morning, not next Friday." }
+      ],
+      "actions": [
+        { "type": "goto", "url": "/dashboard" },
+        { "type": "waitFor", "selector": "[data-testid='anomaly-list']" },
+        { "type": "click", "selector": "[data-testid='anomaly-item-0']" },
+        { "type": "wait", "ms": 7000 }
+      ]
+    },
+    {
+      "id": "outro",
+      "voice": "Charon",
+      "narration": "Always-on. Not a dashboard you visit — a system that's already working.",
+      "actions": [
+        { "type": "goto", "url": "/" },
+        { "type": "wait", "ms": 4000 }
+      ]
+    }
+  ]
+}

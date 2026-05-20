@@ -1,0 +1,52 @@
+{
+  "$schema": "Edit this file to describe your demo. Each scene = one beat in the walkthrough.",
+  "output": "demo/output/demo.mp4",
+  "baseUrl": "http://localhost:3000",
+  "viewport": { "width": 1280, "height": 720 },
+  "model": "gemini-3.1-flash-tts-preview",
+  "voice": "Kore",
+  "globalStyle": "Confident, slightly understated executive tone — like a CTO walking a board through a new capability. Natural pacing, no overselling.",
+  "slowMo": 250,
+  "scenes": [
+    {
+      "id": "intro",
+      "narration": "Welcome. Let me show you what changes when your operational signals stop sitting in dashboards and start telling you what to do.",
+      "actions": [
+        { "type": "goto", "url": "/" },
+        { "type": "wait", "ms": 2000 }
+      ]
+    },
+    {
+      "id": "dashboard",
+      "narration": "[pause] The home view surfaces every active anomaly across the business. Not a feed of events — a ranked list of decisions waiting on someone.",
+      "actions": [
+        { "type": "goto", "url": "/dashboard" },
+        { "type": "waitFor", "selector": "[data-testid='anomaly-list']" },
+        { "type": "wait", "ms": 1500 },
+        { "type": "scroll", "y": 200 },
+        { "type": "wait", "ms": 1500 }
+      ]
+    },
+    {
+      "id": "drill-down",
+      "style": "Slightly slower and more deliberate, like you're making a point you want to land.",
+      "narration": "[emphasis] Twelve hours. That's how far ahead this caught the inventory mismatch — before it would have surfaced in any weekly report.",
+      "actions": [
+        { "type": "click", "selector": "[data-testid='anomaly-item-0']" },
+        { "type": "waitFor", "selector": "[data-testid='anomaly-detail']" },
+        { "type": "wait", "ms": 1000 },
+        { "type": "highlight", "selector": "[data-testid='anomaly-confidence']" },
+        { "type": "wait", "ms": 1500 }
+      ]
+    },
+    {
+      "id": "outro",
+      "voice": "Aoede",
+      "narration": "This is what we mean by always-on. The system isn't waiting for your next review cycle. It's already working.",
+      "actions": [
+        { "type": "goto", "url": "/" },
+        { "type": "wait", "ms": 2500 }
+      ]
+    }
+  ]
+}

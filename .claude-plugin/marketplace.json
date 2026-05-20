@@ -1,0 +1,19 @@
+{
+  "name": "demo-reel-marketplace",
+  "owner": {
+    "name": "Arup Maity"
+  },
+  "description": "Plugins for generating narrated product demo videos with Playwright and Gemini TTS",
+  "plugins": [
+    {
+      "name": "demo-reel",
+      "source": "./plugins/demo-reel",
+      "description": "Generate narrated product demo videos. Three skills (record, multi-speaker, compose), native OS-keychain credential storage for the Gemini API key, automated QA stage, and a phase-based confirmation workflow.",
+      "version": "0.3.0",
+      "category": "media",
+      "tags": ["playwright", "video", "tts", "gemini", "demo", "marketing"],
+      "keywords": ["demo video", "product demo", "screen recording", "narration", "voiceover"],
+      "license": "MIT"
+    }
+  ]
+}

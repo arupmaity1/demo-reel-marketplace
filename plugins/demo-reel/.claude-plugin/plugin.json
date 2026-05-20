@@ -1,0 +1,35 @@
+{
+  "name": "demo-reel",
+  "description": "Generate narrated product demo videos: Playwright records browser walkthroughs, Gemini TTS provides the voiceover, ffmpeg stitches them together. Includes record, multi-speaker, and compose skills.",
+  "version": "0.3.0",
+  "author": {
+    "name": "Arup Maity"
+  },
+  "homepage": "https://github.com/your-org/demo-reel-marketplace",
+  "repository": "https://github.com/your-org/demo-reel-marketplace",
+  "license": "MIT",
+  "keywords": ["playwright", "video", "tts", "gemini", "demo", "marketing"],
+  "userConfig": {
+    "gemini_api_key": {
+      "type": "string",
+      "title": "Gemini API key",
+      "description": "Used for text-to-speech narration. Get one at https://aistudio.google.com/apikey",
+      "sensitive": true,
+      "required": true
+    },
+    "default_voice": {
+      "type": "string",
+      "title": "Default narrator voice",
+      "description": "Gemini TTS voice for single-narrator demos. Options: Kore, Puck, Aoede, Enceladus, Charon, Fenrir. Can be overridden per-demo in scenes.json.",
+      "default": "Kore",
+      "required": false
+    },
+    "default_model": {
+      "type": "string",
+      "title": "Gemini TTS model",
+      "description": "Override the default TTS model. Leave blank to use the recommended preview model.",
+      "default": "gemini-3.1-flash-tts-preview",
+      "required": false
+    }
+  }
+}
