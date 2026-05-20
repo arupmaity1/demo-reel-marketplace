@@ -1,12 +1,12 @@
 {
   "name": "demo-reel",
   "description": "Generate narrated product demo videos: Playwright records browser walkthroughs, Gemini TTS provides the voiceover, ffmpeg stitches them together. Includes record, multi-speaker, and compose skills.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Arup Maity"
   },
-  "homepage": "https://github.com/your-org/demo-reel-marketplace",
-  "repository": "https://github.com/your-org/demo-reel-marketplace",
+  "homepage": "https://github.com/arupmaity1/demo-reel-marketplace",
+  "repository": "https://github.com/arupmaity1/demo-reel-marketplace",
   "license": "MIT",
   "keywords": ["playwright", "video", "tts", "gemini", "demo", "marketing"],
   "userConfig": {
